@@ -226,7 +226,7 @@ class anypreter(sublime_plugin.TextCommand):
 		if binary_path: command = binary_path + "/" + command
 
 		# Start the process which executes the command
-		process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+		process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 		# Decide if the output gets buffered and print the available text in a specific interval
 		if self.get_view().settings().get("anypreter_stream_output", False):
