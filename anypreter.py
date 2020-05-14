@@ -1,5 +1,6 @@
-import sublime, sublime_plugin, subprocess, os, re, thread, functools, json, time
-
+import sublime, sublime_plugin, subprocess, os, re, functools, json, time
+import _thread as thread
+import base64
 
 class anypreter(sublime_plugin.TextCommand):
 
@@ -155,7 +156,7 @@ class anypreter(sublime_plugin.TextCommand):
 		custom_stuff = open(path).read().replace('\r\n', '\n')
 
 		#lMapping = os.linesep.join(lMapping.splitlines())
-		exec custom_stuff
+		exec(custom_stuff)
 		return code # Return its resulting code
 
 
@@ -176,6 +177,9 @@ class anypreter(sublime_plugin.TextCommand):
 		# Get the encryption-name if there is one
 		encryption = self.get_option("encryption")
 		if not encryption: return code # Else return untouched code
+
+		if encryption == 'base64':
+			return base64.b64encode(bytes(code, encoding='utf8')).decode('utf-8').replace("\n", "")
 
 		# Return the encrypted and break-stripped code
 		return str(code).encode(encryption).replace("\n", "")
@@ -290,14 +294,14 @@ class anypreter(sublime_plugin.TextCommand):
 
 		# Unlock the output panel so we can put text in it
 		panel.set_read_only(False)
+		panel.settings().set("line_numbers", False)
+		panel.settings().set("gutter", False)
+		panel.settings().set("scroll_past_end", False)
 
 		# Set its syntax to display line-numbers
 		panel.set_syntax_file('Packages/Text/Plain text.tmLanguage')
 
-		edit = panel.begin_edit() # Start editing
-
-		panel.insert(edit, panel.size(), value.decode('utf-8')) # Insert the output
-		panel.end_edit(edit) # End the editing
+		panel.run_command("append", {"characters": value.decode('utf-8')})
 
 		# Lock and display the panel
 		panel.set_read_only(True)
