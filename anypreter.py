@@ -294,6 +294,9 @@ class anypreter(sublime_plugin.TextCommand):
 
 		# Unlock the output panel so we can put text in it
 		panel.set_read_only(False)
+		panel.settings().set("line_numbers", False)
+		panel.settings().set("gutter", False)
+		panel.settings().set("scroll_past_end", False)
 
 		# Set its syntax to display line-numbers
 		panel.set_syntax_file('Packages/Text/Plain text.tmLanguage')
