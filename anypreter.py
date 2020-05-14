@@ -6,7 +6,6 @@ class anypreter(sublime_plugin.TextCommand):
 
 	def interpret(self):
 
-		print("start me up")
 		code = self.get_code() # Get the code
 		if not code: return False # No code, what are you trying to do?
 
@@ -157,8 +156,7 @@ class anypreter(sublime_plugin.TextCommand):
 		custom_stuff = open(path).read().replace('\r\n', '\n')
 
 		#lMapping = os.linesep.join(lMapping.splitlines())
-		print("hello cruel world")
-		# exec custom_stuff
+		exec(custom_stuff)
 		return code # Return its resulting code
 
 
@@ -181,7 +179,7 @@ class anypreter(sublime_plugin.TextCommand):
 		if not encryption: return code # Else return untouched code
 
 		if encryption == 'base64':
-			return str(base64.b64encode(bytes(code, encoding='utf8'))).replace("\n", "")
+			return base64.b64encode(bytes(code, encoding='utf8')).decode('utf-8').replace("\n", "")
 
 		# Return the encrypted and break-stripped code
 		return str(code).encode(encryption).replace("\n", "")
@@ -300,10 +298,7 @@ class anypreter(sublime_plugin.TextCommand):
 		# Set its syntax to display line-numbers
 		panel.set_syntax_file('Packages/Text/Plain text.tmLanguage')
 
-		edit = panel.begin_edit() # Start editing
-
-		panel.insert(edit, panel.size(), value.decode('utf-8')) # Insert the output
-		panel.end_edit(edit) # End the editing
+		panel.run_command("append", {"characters": value.decode('utf-8')})
 
 		# Lock and display the panel
 		panel.set_read_only(True)

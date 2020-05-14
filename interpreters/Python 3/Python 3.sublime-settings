@@ -1,0 +1,6 @@
+{
+	"Name": "Python 3",
+	"encryption": "base64",
+	"wrapper": "import base64; exec(base64.b64decode('%code%'))",
+	"command": "python3 -c \"%code%\""
+}
