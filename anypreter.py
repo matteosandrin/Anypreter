@@ -1,10 +1,12 @@
-import sublime, sublime_plugin, subprocess, os, re, thread, functools, json, time
-
+import sublime, sublime_plugin, subprocess, os, re, functools, json, time
+import _thread as thread
+import base64
 
 class anypreter(sublime_plugin.TextCommand):
 
 	def interpret(self):
 
+		print("start me up")
 		code = self.get_code() # Get the code
 		if not code: return False # No code, what are you trying to do?
 
@@ -155,7 +157,8 @@ class anypreter(sublime_plugin.TextCommand):
 		custom_stuff = open(path).read().replace('\r\n', '\n')
 
 		#lMapping = os.linesep.join(lMapping.splitlines())
-		exec custom_stuff
+		print("hello cruel world")
+		# exec custom_stuff
 		return code # Return its resulting code
 
 
@@ -176,6 +179,9 @@ class anypreter(sublime_plugin.TextCommand):
 		# Get the encryption-name if there is one
 		encryption = self.get_option("encryption")
 		if not encryption: return code # Else return untouched code
+
+		if encryption == 'base64':
+			return str(base64.b64encode(bytes(code, encoding='utf8'))).replace("\n", "")
 
 		# Return the encrypted and break-stripped code
 		return str(code).encode(encryption).replace("\n", "")
